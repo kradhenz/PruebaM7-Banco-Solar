@@ -15,12 +15,4 @@ const config = {
 
 const pool = new Pool(config);
 
-/*/ TEST
-const getData = async () => {
-    const response = await pool.query('SELECT NOW()');
-    console.log(response);
-}
-
-getData();*/
-
 export default pool;

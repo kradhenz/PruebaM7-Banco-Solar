@@ -1,4 +1,3 @@
-// import { home, addUser, getUser, editUser, deleteUser, addTranfer, getTranfer } from "../controller/user.js";
 import { addUserQuery, getUserQuery, editUserQuery, deleteUserQuery, addTranferQuery, getTransferQuery} from "../db/queries.js";
 import express from "express";
 import path from "path";

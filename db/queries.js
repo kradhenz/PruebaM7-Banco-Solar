@@ -3,12 +3,11 @@ import pool from "../config/db.js";
 // CREATE USER  
 const addUserQuery = async (datos) => {
     try {
-        const query = {
+        const query = { 
             text: "INSERT INTO usuarios (nombre, balance) VALUES ($1, $2) RETURNING *",
             values: datos,
         };
         const result = await pool.query(query);
-        console.log(result.rows);
         return result.rows;
     } catch (error) {
         return error;
@@ -28,6 +27,7 @@ const getUserQuery = async () => {
     }
 };
 
+// UPDATE/EDIT
 const editUserQuery = async (datos) => {
     try {
         const query = {
@@ -35,6 +35,7 @@ const editUserQuery = async (datos) => {
             values: datos,
         };
         const result = await pool.query(query);
+        // edit validation
         if (result.rowCount === 0) {
             throw new Error("No se editó el usuario");
         } else {
@@ -45,6 +46,7 @@ const editUserQuery = async (datos) => {
     }
 };
 
+// DELETE
 const deleteUserQuery = async (id) => {
     try {
         const query = {
@@ -66,45 +68,55 @@ const deleteUserQuery = async (id) => {
     }
 };
 
+// CREATE/ADD TRANSFER
 const addTranferQuery = async (datos) => {
     //buscamos el id del emisor
     const { emisor, receptor, monto } = datos;
     const { id: emisorId } = (
         await pool.query(`SELECT * FROM usuarios WHERE nombre = '${emisor}'`)
     ).rows[0];
+
     //buscamos el id del receptor
     const { id: receptorId } = (
         await pool.query(`SELECT * FROM usuarios WHERE nombre = '${receptor}'`)
     ).rows[0];
+
+    // registra la transferencia
     const registerTranfer = {
         text: "INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3, NOW()) RETURNING *",
         values: [emisorId, receptorId, monto],
     };
+
+    // actualizar el balance del emisor
     const updateBalanceEmisor = {
         text: "UPDATE usuarios SET balance = balance - $1 WHERE nombre = $2 RETURNING *",
         values: [monto, emisor],
     };
+
+    // actualizar el balance del receptor
     const updateBalanceReceptor = {
         text: "UPDATE usuarios SET balance = balance + $1 WHERE nombre = $2 RETURNING *",
         values: [monto, receptor],
     };
 
     try {
-        await pool.query("BEGIN");
-        await pool.query(registerTranfer);
-        await pool.query(updateBalanceEmisor);
-        await pool.query(updateBalanceReceptor);
-        await pool.query("COMMIT");
+        await pool.query("BEGIN"); // inicia la transacción
+        await pool.query(registerTranfer); // registra la transferencia
+        await pool.query(updateBalanceEmisor); // actualiza el balance del emisor
+        await pool.query(updateBalanceReceptor); // actualiza el balance del receptor
+        await pool.query("COMMIT"); // termina la transacción
         return true;
     } catch (error) {
-        await pool.query("ROLLBACK");
+        await pool.query("ROLLBACK"); // revierte la transacción 
         return error;
     }
 };
 
+// READ/SHOW TRANSFER
 const getTransferQuery = async () => {
     try {
-        const querys = {
+        // consulta para mostrar todas las transferencias
+        const querys = { 
             text: `SELECT
                     e.nombre AS emisor,
                     r.nombre AS receptor,
@@ -117,11 +129,11 @@ const getTransferQuery = async () => {
                 JOIN
                     usuarios r ON t.receptor = r.id;
         `,
-            rowMode: "array",
+            rowMode: "array", // devuelve un array de objetos
         };
-        const result = await pool.query(querys);
+        const result = await pool.query(querys); // ejecuta la consulta
         console.log(result.rows);
-        return result.rows;
+        return result.rows; // devuelve el resultado
     } catch (error) {
         return error;
     }

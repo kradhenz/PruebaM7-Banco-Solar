@@ -53,7 +53,7 @@
               <input type="text" class="form-control mx-2 w-auto d-inline" id="monto" />
             </div>
 
-            <button type="submit" class="btn btn-danger">Relalizar</button>
+            <button type="submit" class="btn btn-danger">Realizar</button>
           </div>
         </div>
       </form>
@@ -175,8 +175,9 @@
     try {
       const { data } = await axios.put(
         `http://localhost:3000/usuario?id=${id}`,
+
         {
-          name,
+          nombre: name,
           balance,
         }
       );
@@ -194,6 +195,7 @@
     try {
       const response = await fetch("http://localhost:3000/usuario", {
         method: "post",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre,
           balance,
@@ -219,6 +221,7 @@
     try {
       const response = await fetch("http://localhost:3000/transferencia", {
         method: "post",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           emisor,
           receptor,
@@ -254,7 +257,7 @@
                   ><button class="btn btn-danger" onclick="eliminarUsuario('${c.id}')">Eliminar</button>
                 </td>
               </tr>
-         `);
+          `);
 
       $("#emisor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
       $("#receptor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
@@ -265,6 +268,7 @@
     const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
       method: "DELETE",
     });
+    alert(`Usuario con id: ${id} eliminado`);
     getUsuarios();
   };
 
@@ -274,13 +278,13 @@
 
     data.forEach((t) => {
       $(".transferencias").append(`
-       <tr>
-         <td> ${formatDate(t[4])} </td>
-         <td> ${t[1]} </td>
-         <td> ${t[2]} </td>
-         <td> ${t[3]} </td>
-       </tr>
-     `);
+        <tr>
+          <td> ${formatDate(t[3])} </td>
+          <td> ${t[0]} </td>
+          <td> ${t[1]} </td>
+          <td> ${t[2]} </td>
+        </tr>
+      `);
     });
   };
 

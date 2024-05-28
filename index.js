@@ -1,11 +1,11 @@
 import express from 'express';
-import path from 'path';
 import router from './routes/router.js';
 
 const app = express();
 const port = 3000;
 
 // Static files
+app.use(express.json());
 app.use('/', router);
 
 // Undefined route managament

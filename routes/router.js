@@ -1,20 +1,20 @@
 import express from "express";
-import { home, createUser, readUser, updateUser, deleteUser, addTranfer, getTranfer } from "../controller/userController.js";
+import { home, createUser, readUser, updateUser, deleteUser, createTranfer, readTranfer } from "../controller/userController.js";
 
 const router = express.Router();
 
-router.get("/", home)
+router.get("/", home);
 
-router.post("/usuario", createUser)
+router.post("/usuario", createUser);
 
-router.get("/usuarios", readUser)
+router.get("/usuarios", readUser);
 
-router.put('/usuario', updateUser)
+router.put('/usuario', updateUser);
 
-router.delete('/usuario', deleteUser)
+router.delete('/usuario', deleteUser);
 
-router.post('/transferencia', addTranfer)
+router.post('/transferencia', createTranfer);
 
-router.get('/transferencias', getTranfer)
+router.get('/transferencias', readTranfer);
 
 export default router
